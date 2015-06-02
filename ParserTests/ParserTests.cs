@@ -3,17 +3,19 @@
 namespace ParserTests
 {
     [TestFixture]
-    public class ParserTests
+    public class ParserTests : TestHelper
     {
-        [TestFixtureSetUp]
-        public void Initialize()
+        [SetUp]
+        public new void SetUp()
         {
-            
+            base.SetUp();
+
         }
 
         [Test]
-        public void TestMethod1()
+        public void XmlSameParameterTest()
         {
+
         }
         
         [Test]
