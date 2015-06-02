@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30501.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XmlParser", "XmlParser\XmlParser.csproj", "{763F3CE4-A631-41CB-AABF-31F8108C48EC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{88CC4907-201E-4C16-904B-53693AB5A9C6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParserTests", "ParserTests\ParserTests.csproj", "{84B4F957-3955-4C01-81B3-D8158F91C293}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{763F3CE4-A631-41CB-AABF-31F8108C48EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{763F3CE4-A631-41CB-AABF-31F8108C48EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{763F3CE4-A631-41CB-AABF-31F8108C48EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{763F3CE4-A631-41CB-AABF-31F8108C48EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88CC4907-201E-4C16-904B-53693AB5A9C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88CC4907-201E-4C16-904B-53693AB5A9C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88CC4907-201E-4C16-904B-53693AB5A9C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88CC4907-201E-4C16-904B-53693AB5A9C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84B4F957-3955-4C01-81B3-D8158F91C293}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84B4F957-3955-4C01-81B3-D8158F91C293}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84B4F957-3955-4C01-81B3-D8158F91C293}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84B4F957-3955-4C01-81B3-D8158F91C293}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
