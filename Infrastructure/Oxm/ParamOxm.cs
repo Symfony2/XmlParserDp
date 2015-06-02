@@ -9,6 +9,7 @@ namespace Infrastructure.Oxm
             : base("param")
         {
             Root().Attribute("name", m => m.Name).Set((m, value) => m.Name = value);
+            Root().Attribute("unit", m => m.Unit).Set((m, value) => m.Unit = value).Default(null);
             Text(m => m.Content).Set((m, value) => m.Content = value);
         }
 

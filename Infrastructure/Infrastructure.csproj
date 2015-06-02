@@ -43,9 +43,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Model\OfferNewModel.cs" />
+    <Compile Include="Model\OfferOldModel.cs" />
     <Compile Include="Model\Param.cs" />
+    <Compile Include="Model\Picture.cs" />
+    <Compile Include="Model\PictureOrig.cs" />
     <Compile Include="Oxm\OfferNewModelOxm.cs" />
+    <Compile Include="Oxm\OfferOldModelOxm.cs" />
     <Compile Include="Oxm\ParamOxm.cs" />
+    <Compile Include="Oxm\PictureOrigOxm.cs" />
+    <Compile Include="Oxm\PictureOxm.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

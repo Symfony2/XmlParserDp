@@ -1,4 +1,6 @@
-﻿namespace Infrastructure.Model
+﻿using System.Collections.Generic;
+
+namespace Infrastructure.Model
 {
     public class OfferNewModel
     {
@@ -16,6 +18,16 @@
         public string MarketCategory { get; set; }
         public string Model { get; set; }
         public string Name { get; set; }
-        public Param ColorParam { get; set; }
+        public IEnumerable<Param> Params { get; set; }
+        public bool Pickup { get; set; }
+        public IEnumerable<Picture> Pictures { get; set; }
+        public int Price { get; set; }
+        public string SalesNotes { get; set; }
+        public bool Store { get; set; }
+        public string TypePrefix { get; set; }
+        public string Vendor { get; set; }
+        public string VendorCode { get; set; }
+        public string Url { get; set; }
+        public string ModifiedTime { get; set; }
     }
 }
