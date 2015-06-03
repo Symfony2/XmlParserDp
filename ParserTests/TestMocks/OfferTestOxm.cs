@@ -6,6 +6,7 @@ namespace ParserTests.TestMocks
 {
     public class OfferTest
     {
+        public string SomeOtherProperty { get; set; }
         public IEnumerable<Param> Params { get; set; }
     }
 
