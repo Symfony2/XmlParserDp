@@ -72,7 +72,8 @@
             </WrapPanel>
             
             <WrapPanel Grid.Row="4" Orientation="Vertical" Margin="5,20,5,0" HorizontalAlignment="Right">
-                <Button Style="{StaticResource AccentedSquareButtonStyle}" Width="130" ToolTip="Преобразовать" >
+                <Button Style="{StaticResource AccentedSquareButtonStyle}" Width="130" ToolTip="Преобразовать"
+                        Command="{Binding Path=Process}">
                     <Rectangle Width="30" Height="30" Fill="White">
                         <Rectangle.OpacityMask>
                             <VisualBrush Stretch="Fill"
