@@ -3,23 +3,92 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
+using System.Xml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using Infrastructure.Model;
 using Microsoft.Win32;
+using Newtonsoft.Json;
 
 namespace XmlParser.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
+        private List<ExcelMatchModel> excelMatchList;
+        private JsonMatchModel[] jsonMatchList;
+        private XmlDocument xmlDocument;
+
         public MainViewModel()
         {
+            excelMatchList = new List<ExcelMatchModel>();
+            xmlDocument = new XmlDocument();
         }
 
-        public FileInfo ExcelFile { get; set; }
-        public FileInfo JsonFile { get; set; }
+        #region Properties
+
+        private string excelFileName;
+
+        public string ExcelFileName
+        {
+            get { return excelFileName; }
+            set
+            {
+                excelFileName = value;
+                RaisePropertyChanged(() => ExcelFileName);
+            }
+        }
+
+        private string jsonFileName;
+        public string JsonFileName
+        {
+            get { return jsonFileName; }
+            set
+            {
+                jsonFileName = value;
+                RaisePropertyChanged(() => JsonFileName);
+            }
+        }
+
+        private string xmlFileName;
+        public string XmlFileName
+        {
+            get { return xmlFileName; }
+            set
+            {
+                xmlFileName = value;
+                RaisePropertyChanged(() => XmlFileName);
+            }
+        }
+
+        private bool isJsonParsing;
+        public bool IsJsonParsing
+        {
+            get { return isJsonParsing; }
+            set
+            {
+                isJsonParsing = value;
+                RaisePropertyChanged(() => IsJsonParsing);
+            }
+        }
+
+        private bool isXmlParsing;
+
+        public bool IsXmlParsing
+        {
+            get { return isXmlParsing; }
+            set
+            {
+                isXmlParsing = value;
+                RaisePropertyChanged(() => IsXmlParsing);
+            }
+        }
+
+        #endregion
 
         public ICommand OpenExcelDoc
         {
@@ -27,16 +96,25 @@ namespace XmlParser.ViewModels
             {
                 return new RelayCommand(() =>
                     {
-                        var file = new OpenFileDialog
+                        string fileName = OpenFileDialogResult("Excel Files|*.xls;*.xlsx;*.xlsm");
+                        if (!string.IsNullOrEmpty(fileName) && File.Exists(fileName))
                         {
-                            Filter = "Excel Files|*.xls;*.xlsx;*.xlsm",
-                            Multiselect = false
-                        };
-                        file.ShowDialog();
-
-                        if (file.CheckFileExists)
-                        {
-                            var dataTable = ReadAsDataTable(file.FileName);
+                            try
+                            {
+                                ExcelFileName = fileName;
+                                excelMatchList.Clear();
+                                var dataTable = ReadAsDataTable(fileName);
+                                foreach (DataRow row in dataTable.Rows)
+                                {
+                                    var newCatId = int.Parse(row.Field<string>("New_Cat_ID"));
+                                    var oldCatId = int.Parse(row.Field<string>("Old_Cat_ID"));
+                                    excelMatchList.Add(new ExcelMatchModel { NewCatId = newCatId, OldCatId = oldCatId });
+                                }
+                            }
+                            catch (Exception exception)
+                            {
+                                MessageBox.Show(exception.Message);
+                            }
                         }
                     });
             }
@@ -47,22 +125,83 @@ namespace XmlParser.ViewModels
             {
                 return new RelayCommand(() =>
                     {
+                        string fileName = OpenFileDialogResult("Json Files|*.json");
+                        if (!string.IsNullOrEmpty(fileName) && File.Exists(fileName))
+                        {
+                            JsonFileName = fileName;
+                            Task.Factory.StartNew(() =>
+                            {
+                                IsJsonParsing = true;
+                                try
+                                {
+                                    var jsonSerializer = new JsonSerializer();
+                                    using (var streamReader = new StreamReader(fileName))
+                                    using (var reader = new JsonTextReader(streamReader))
+                                    {
+                                        jsonMatchList = jsonSerializer.Deserialize<JsonMatchModel[]>(reader);
+                                    }
+                                }
+                                catch (Exception exception)
+                                {
+                                    MessageBox.Show(exception.Message);
+                                }
+                                finally
+                                {
+                                    IsJsonParsing = false;
+                                }
+                            });
 
+                        }
                     });
             }
         }
 
+        public ICommand OpenXmlDoc
+        {
+            get
+            {
+                return new RelayCommand(() =>
+                    {
+                        string fileName = OpenFileDialogResult("Xml Files|*.xml");
+                        if (!string.IsNullOrEmpty(fileName) && File.Exists(fileName))
+                        {
+                            XmlFileName = fileName;
+                            var settings = new XmlReaderSettings();
+                            settings.DtdProcessing = DtdProcessing.Parse;
+
+                            using (var streamReader = new StreamReader(fileName))
+                            using (var xmlReader = XmlReader.Create(streamReader, settings))
+                            {
+                                xmlDocument.Load(xmlReader);
+                            }
+                        }
+                    });
+            }
+        }
+
+        private string OpenFileDialogResult(string filter)
+        {
+            var file = new OpenFileDialog
+            {
+                Filter = filter,
+                Multiselect = false
+            };
+            file.ShowDialog();
+
+            return file.FileName;
+        }
+
         private DataTable ReadAsDataTable(string fileName)
         {
-            DataTable dataTable = new DataTable();
+            var dataTable = new DataTable();
             using (SpreadsheetDocument spreadSheetDocument = SpreadsheetDocument.Open(fileName, false))
             {
                 WorkbookPart workbookPart = spreadSheetDocument.WorkbookPart;
                 IEnumerable<Sheet> sheets = spreadSheetDocument.WorkbookPart.Workbook.GetFirstChild<Sheets>().Elements<Sheet>();
                 string relationshipId = sheets.First().Id.Value;
-                WorksheetPart worksheetPart = (WorksheetPart)spreadSheetDocument.WorkbookPart.GetPartById(relationshipId);
+                var worksheetPart = (WorksheetPart)spreadSheetDocument.WorkbookPart.GetPartById(relationshipId);
                 Worksheet workSheet = worksheetPart.Worksheet;
-                SheetData sheetData = workSheet.GetFirstChild<SheetData>();
+                var sheetData = workSheet.GetFirstChild<SheetData>();
                 IEnumerable<Row> rows = sheetData.Descendants<Row>();
 
                 foreach (Cell cell in rows.ElementAt(0))
