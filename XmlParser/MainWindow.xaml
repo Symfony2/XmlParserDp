@@ -72,8 +72,17 @@
             </WrapPanel>
             
             <WrapPanel Grid.Row="4" Orientation="Vertical" Margin="5,20,5,0" HorizontalAlignment="Right">
+                <Button Style="{StaticResource AccentedSquareButtonStyle}" Width="130" ToolTip="Остановить"
+                        Command="{Binding Path=Stop}" Margin="2">
+                    <Rectangle Width="30" Height="30" Fill="White">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Stretch="Fill"
+                                     Visual="{DynamicResource appbar_stop}" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                </Button>
                 <Button Style="{StaticResource AccentedSquareButtonStyle}" Width="130" ToolTip="Преобразовать"
-                        Command="{Binding Path=Process}">
+                        Command="{Binding Path=Process}" Margin="2">
                     <Rectangle Width="30" Height="30" Fill="White">
                         <Rectangle.OpacityMask>
                             <VisualBrush Stretch="Fill"

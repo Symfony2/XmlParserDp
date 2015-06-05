@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -14,6 +15,7 @@ using GalaSoft.MvvmLight.Command;
 using Infrastructure.Model;
 using Microsoft.Win32;
 using Newtonsoft.Json;
+using XmlParser.Models;
 
 namespace XmlParser.ViewModels
 {
@@ -21,12 +23,13 @@ namespace XmlParser.ViewModels
     {
         private List<ExcelMatchModel> excelMatchList;
         private JsonMatchModel[] jsonMatchList;
-        private XmlDocument xmlDocument;
+        private CancellationTokenSource cancellationTokenSource;
+        private IdentityWrapper identityMatches;
 
         public MainViewModel()
         {
             excelMatchList = new List<ExcelMatchModel>();
-            xmlDocument = new XmlDocument();
+            cancellationTokenSource = new CancellationTokenSource();
         }
 
         #region Properties
@@ -140,36 +143,61 @@ namespace XmlParser.ViewModels
 
         public ICommand Process
         {
-            get { return new RelayCommand(() => { }); }
+            get
+            {
+                return new RelayCommand(() =>
+                    Task.WhenAll(ProcessExcelDoc(), ProcessJsonDoc())
+                    .ContinueWith(t =>
+                    {
+                        identityMatches = new IdentityWrapper(excelMatchList, jsonMatchList);
+                        identityMatches.Initialize();
+
+                    }, TaskContinuationOptions.NotOnFaulted));
+            }
+        }
+
+        public ICommand Stop
+        {
+            get
+            {
+                return new RelayCommand(() => cancellationTokenSource.Cancel());
+            }
         }
 
         private Task ProcessExcelDoc()
         {
-            return Task.Factory.StartNew(
+            CancellationToken token = cancellationTokenSource.Token;
+            Task processExcelDocTask = Task.Factory.StartNew(
                 () =>
                 {
+                    if (string.IsNullOrEmpty(ExcelFileName))
+                        return;
                     try
                     {
                         excelMatchList.Clear();
                         var dataTable = ReadAsDataTable(ExcelFileName);
                         foreach (DataRow row in dataTable.Rows)
                         {
-                            var newCatId = int.Parse(row.Field<string>("New_Cat_ID"));
-                            var oldCatId = int.Parse(row.Field<string>("Old_Cat_ID"));
-                            excelMatchList.Add(new ExcelMatchModel {NewCatId = newCatId, OldCatId = oldCatId});
+                            var newCatId = row.Field<string>("New_Cat_ID");
+                            var oldCatId = row.Field<string>("Old_Cat_ID");
+                            excelMatchList.Add(new ExcelMatchModel { NewCatId = newCatId, OldCatId = oldCatId });
                         }
                     }
                     catch (Exception exception)
                     {
                         MessageBox.Show(exception.Message);
                     }
-                });
+                }, token);
+            return processExcelDocTask;
         }
 
         private Task ProcessJsonDoc()
         {
-            return Task.Factory.StartNew(() =>
+            CancellationToken token = cancellationTokenSource.Token;
+            Task processJsonDocTask = Task.Factory.StartNew(() =>
             {
+                if (string.IsNullOrEmpty(JsonFileName))
+                    return;
                 IsJsonParsing = true;
                 try
                 {
@@ -188,17 +216,21 @@ namespace XmlParser.ViewModels
                 {
                     IsJsonParsing = false;
                 }
-            });
+            }, token);
+            return processJsonDocTask;
         }
 
-        private void ProcessXmlDoc()
+        private Task ProcessXmlDoc()
         {
-            Task.Factory.StartNew(() =>
+            CancellationToken token = cancellationTokenSource.Token;
+            Task processXmlDocTask = Task.Factory.StartNew(() =>
             {
+                if (string.IsNullOrEmpty(XmlFileName))
+                    return;
                 IsXmlParsing = true;
                 try
                 {
-                    StreamNodes(XmlFileName, new[] {"offer"});
+                    StreamNodes(XmlFileName, new[] { "offer" });
                 }
                 catch (Exception exception)
                 {
@@ -208,12 +240,13 @@ namespace XmlParser.ViewModels
                 {
                     IsXmlParsing = false;
                 }
-            });
+            }, token);
+            return processXmlDocTask;
         }
 
         private void StreamNodes(string path, string[] tagNames)
         {
-            var settings = new XmlReaderSettings {DtdProcessing = DtdProcessing.Parse};
+            var settings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse };
             var doc = new XmlDocument();
 
             using (var streamReader = new StreamReader(path))
@@ -260,7 +293,7 @@ namespace XmlParser.ViewModels
                 IEnumerable<Sheet> sheets =
                     spreadSheetDocument.WorkbookPart.Workbook.GetFirstChild<Sheets>().Elements<Sheet>();
                 string relationshipId = sheets.First().Id.Value;
-                var worksheetPart = (WorksheetPart) spreadSheetDocument.WorkbookPart.GetPartById(relationshipId);
+                var worksheetPart = (WorksheetPart)spreadSheetDocument.WorkbookPart.GetPartById(relationshipId);
                 Worksheet workSheet = worksheetPart.Worksheet;
                 var sheetData = workSheet.GetFirstChild<SheetData>();
                 IEnumerable<Row> rows = sheetData.Descendants<Row>();

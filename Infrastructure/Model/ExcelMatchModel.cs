@@ -2,7 +2,7 @@
 {
     public class ExcelMatchModel
     {
-        public int OldCatId { get; set; } 
-        public int NewCatId { get; set; } 
+        public string OldCatId { get; set; } 
+        public string NewCatId { get; set; } 
     }
 }
