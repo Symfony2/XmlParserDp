@@ -8,7 +8,13 @@ namespace Infrastructure.Model
         public string OriginalId { get; set; }
         
         [JsonProperty("admitad_category_id")]
-        public string AdmitadCategoryId { get; set; } 
+        public string AdmitadCategoryId { get; set; }
+
+        [JsonProperty("campaign_id")]
+        public string CampaignId { get; set; }
+
+        [JsonProperty("campaign_name")]
+        public string CampaignName { get; set; } 
         
     }
 }

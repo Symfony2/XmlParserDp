@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using System.Xml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using GalaSoft.MvvmLight;
@@ -15,7 +14,7 @@ using GalaSoft.MvvmLight.Command;
 using Infrastructure.Model;
 using Microsoft.Win32;
 using Newtonsoft.Json;
-using XmlParser.Models;
+using XmlParser.Services;
 
 namespace XmlParser.ViewModels
 {
@@ -24,12 +23,15 @@ namespace XmlParser.ViewModels
         private List<ExcelMatchModel> excelMatchList;
         private JsonMatchModel[] jsonMatchList;
         private CancellationTokenSource cancellationTokenSource;
-        private IdentityWrapper identityMatches;
+        private IdentityWrapperService identityMatches;
+        private XmlProcessorService xmlProcessorService;
+        private TaskScheduler taskScheduler;
 
         public MainViewModel()
         {
             excelMatchList = new List<ExcelMatchModel>();
             cancellationTokenSource = new CancellationTokenSource();
+            taskScheduler = TaskScheduler.Current;
         }
 
         #region Properties
@@ -83,7 +85,6 @@ namespace XmlParser.ViewModels
         }
 
         private bool isXmlParsing;
-
         public bool IsXmlParsing
         {
             get { return isXmlParsing; }
@@ -91,6 +92,28 @@ namespace XmlParser.ViewModels
             {
                 isXmlParsing = value;
                 RaisePropertyChanged(() => IsXmlParsing);
+            }
+        }
+
+        private bool replaceCategoryId;
+        public bool ReplaceCategoryId
+        {
+            get { return replaceCategoryId; }
+            set
+            {
+                replaceCategoryId = value;
+                RaisePropertyChanged(() => ReplaceCategoryId);
+            }
+        }
+
+        private bool groupingApply;
+        public bool GroupingApply
+        {
+            get { return groupingApply; }
+            set
+            {
+                groupingApply = value;
+                RaisePropertyChanged(() => GroupingApply);
             }
         }
 
@@ -146,13 +169,18 @@ namespace XmlParser.ViewModels
             get
             {
                 return new RelayCommand(() =>
+                {
+                    const TaskContinuationOptions notOnFaulted = TaskContinuationOptions.NotOnFaulted;
                     Task.WhenAll(ProcessExcelDoc(), ProcessJsonDoc())
-                    .ContinueWith(t =>
-                    {
-                        identityMatches = new IdentityWrapper(excelMatchList, jsonMatchList);
-                        identityMatches.Initialize();
+                                                      .ContinueWith(t =>
+                                                      {
+                                                          identityMatches = new IdentityWrapperService(excelMatchList, jsonMatchList);
+                                                          identityMatches.Initialize();
+                                                          xmlProcessorService = new XmlProcessorService(identityMatches);
 
-                    }, TaskContinuationOptions.NotOnFaulted));
+                                                      }, notOnFaulted)
+                                                      .ContinueWith(t => ProcessXmlDoc(), notOnFaulted);
+                });
             }
         }
 
@@ -230,47 +258,32 @@ namespace XmlParser.ViewModels
                 IsXmlParsing = true;
                 try
                 {
-                    StreamNodes(XmlFileName, new[] { "offer" });
+                    var saveFileDialog = new SaveFileDialog();
+                    saveFileDialog.Filter = "Xml Files|*.xml";
+                    saveFileDialog.ShowDialog();
+
+
+                    identityMatches.ExportCsv(saveFileDialog.SafeFileName);
+                    if (!string.IsNullOrEmpty(saveFileDialog.SafeFileName))
+                    {
+                        xmlProcessorService.ChangeInnerStructure(XmlFileName, saveFileDialog.FileName, replaceCategoryId, groupingApply);
+                    }
+
                 }
                 catch (Exception exception)
                 {
                     MessageBox.Show(exception.Message);
+                    
                 }
                 finally
                 {
                     IsXmlParsing = false;
                 }
-            }, token);
+            }, token, TaskCreationOptions.LongRunning, taskScheduler);
             return processXmlDocTask;
         }
 
-        private void StreamNodes(string path, string[] tagNames)
-        {
-            var settings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse };
-            var doc = new XmlDocument();
-
-            using (var streamReader = new StreamReader(path))
-            using (var xr = XmlReader.Create(streamReader, settings))
-            {
-                xr.MoveToContent();
-                while (true)
-                {
-                    if (xr.NodeType == XmlNodeType.Element &&
-                        tagNames.Contains(xr.Name))
-                    {
-                        var node = doc.ReadNode(xr);
-                    }
-                    else
-                    {
-                        if (!xr.Read())
-                        {
-                            break;
-                        }
-                    }
-                }
-                xr.Close();
-            }
-        }
+        
 
         private string OpenFileDialogResult(string filter)
         {

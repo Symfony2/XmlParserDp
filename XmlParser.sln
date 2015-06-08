@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastru
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParserTests", "ParserTests\ParserTests.csproj", "{84B4F957-3955-4C01-81B3-D8158F91C293}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XmlParser.Data", "XmlParser.Data\XmlParser.Data.csproj", "{EACD4C17-706A-4AC9-8091-52037324E561}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{84B4F957-3955-4C01-81B3-D8158F91C293}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{84B4F957-3955-4C01-81B3-D8158F91C293}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{84B4F957-3955-4C01-81B3-D8158F91C293}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EACD4C17-706A-4AC9-8091-52037324E561}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EACD4C17-706A-4AC9-8091-52037324E561}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EACD4C17-706A-4AC9-8091-52037324E561}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EACD4C17-706A-4AC9-8091-52037324E561}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

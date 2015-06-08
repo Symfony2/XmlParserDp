@@ -5,7 +5,8 @@ namespace Infrastructure.Model
     public class OfferOldModel
     {
         public bool IsAvailable { get; set; }
-        public int OriginalId { get; set; }//todo is unique property only old has
+        public int? GroupId { get; set; }
+        public string OriginalId { get; set; }//todo is unique property only old has
         public string Type { get; set; }
         public string Id { get; set; }
         public bool Delivery { get; set; }
@@ -17,7 +18,7 @@ namespace Infrastructure.Model
         public string TypePrefix { get; set; }
         public string VendorCode { get; set; }
         public IEnumerable<Param> Params { get; set; }
-        public int CategoryId { get; set; }
+        public string CategoryId { get; set; }
         public string Vendor { get; set; }
         public decimal Oldprice { get; set; } //todo is unique property only old has
         public decimal Price { get; set; }

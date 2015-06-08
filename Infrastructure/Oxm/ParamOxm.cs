@@ -1,4 +1,5 @@
-﻿using Contrib.XmlSerializer;
+﻿using System;
+using Contrib.XmlSerializer;
 using Infrastructure.Model;
 
 namespace Infrastructure.Oxm
@@ -8,7 +9,11 @@ namespace Infrastructure.Oxm
         public ParamOxm()
             : base("param")
         {
-            Root().Attribute("name", m => m.Name).Set((m, value) => m.Name = value);
+            Root().Attribute("name", m => m.Name).Set((m, value) =>
+            {
+                m.Name = value;
+                m.Id = Guid.NewGuid();
+            });
             Root().Attribute("unit", m => m.Unit).Set((m, value) => m.Unit = value).Default(null);
             Text(m => m.Content).Set((m, value) => m.Content = value);
         }

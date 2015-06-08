@@ -149,5 +149,60 @@ namespace ParserTests
             Assert.IsNotNull(jsonMatchModel);
         }
 
+        [Test]
+        public void XmlMutatorTests()
+        {
+            const string xmlStr = @"
+<yml_catalog date='2015-06-02 13:18:27'>
+	<shop>
+		<name>lamoda.ru</name>
+		<company>Jamaika</company>
+		<url>http://www.lamoda.ru</url>
+		<phone>8-800-250-08-78</phone>
+		<currencies>
+			<currency rate='1' id='RUB'/>
+		</currencies>
+
+		<categories>			
+			<category id='5' parentId='2'>asd</category>
+			<category id='6' parentId='4'>dsa</category>
+			<category id='7' parentId='2'>fds</category>
+			<category id='8' parentId='2'>wer</category>
+		</categories>
+
+		<offers>
+			<offer available='true' group_id='662480' type='vendor.model' id='AD006EWENU15INL'>
+				<categoryId>179</categoryId>
+				<currencyId>RUB</currencyId>
+				<delivery>true</delivery>
+				<description>Топ adL - adilisik. Цвет: белый.  Сезон: Весна-лето 2015.</description>
+				<name>Топ adL - adilisik</name>
+				<param name='Цвет'>белый</param>
+				<param name='Коллекция'>Весна-лето 2015</param>
+				<param name='Сезонность'>Лето</param>
+				<param name='Страна-изготовитель'>Турция</param>
+				<param name='Размер' unit='INT'>46</param>
+				<param name='Пол'>Женский</param>
+				<param name='Возраст'>Взрослый</param>
+				<picture>http://pi.lmcdn.ru/img600x866/A/D/AD006EWENU15_1_v2.jpg</picture>
+				<picture>http://pi.lmcdn.ru/img600x866/A/D/AD006EWENU15_6_v1.jpg</picture>
+				<picture>http://pi.lmcdn.ru/img600x866/A/D/AD006EWENU15_7_v1.jpg</picture>
+				<picture>http://pi.lmcdn.ru/img600x866/A/D/AD006EWENU15_8_v1.jpg</picture>
+				<price>2599</price>
+				<typePrefix>Топ</typePrefix>
+				<vendor>adL - adilisik</vendor>
+				<vendorCode>11525286000</vendorCode>
+				<url>https://ad.admitad.com/g/3f2779c2d435ca72f0194e8640d77b/?i=5&amp;ulp=http%3A%2F%2Fwww.lamoda.ru%2Fp%2FAD006EWENU15%2F</url>
+				<modified_time>1433145828</modified_time>
+			</offer>
+		</offers>
+	</shop>
+</yml_catalog>
+";
+
+
+
+        }
+
     }
 }

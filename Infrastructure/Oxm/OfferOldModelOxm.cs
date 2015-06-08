@@ -9,9 +9,10 @@ namespace Infrastructure.Oxm
             : base("offer")
         {
             Root().Attribute("available", m => m.IsAvailable).Set((m, value) => m.IsAvailable = value);
-            Root().Attribute("original_id", m => m.OriginalId).Set((m, value) => m.OriginalId = value);
+            Root().Attribute("group_id", m => m.GroupId).Set((m, value) => m.GroupId = value).Default(null);
+            Root().Attribute("original_id", m => m.OriginalId).Set((m, value) => m.OriginalId = value).Default(null);
             Root().Attribute("type", m => m.Type).Set((m, value) => m.Type = value);
-            Root().Attribute("id", m => m.Id).Set((m, value) => m.Id = value);
+            Root().Attribute("id", m => m.Id).Set((m, value) => m.Id = value).Default(null);
 
             Element("delivery", m => m.Delivery).Set((m, value) => m.Delivery = value);
             Element("description", m => m.Description).Set((m, value) => m.Description = value);

@@ -1,4 +1,5 @@
-﻿using Contrib.XmlSerializer;
+﻿using System;
+using Contrib.XmlSerializer;
 using Infrastructure.Model;
 
 namespace Infrastructure.Oxm
@@ -8,7 +9,11 @@ namespace Infrastructure.Oxm
         public PictureOxm()
             : base("picture")
         {
-            Text(m => m.Content).Set((m, value) => m.Content = value);
+            Text(m => m.Content).Set((m, value) =>
+            {
+                m.Id = Guid.NewGuid();
+                m.Content = value;
+            });
         }
 
         protected override Picture Return()

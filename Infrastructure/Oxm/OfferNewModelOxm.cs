@@ -1,4 +1,6 @@
-﻿using Contrib.XmlSerializer;
+﻿using System;
+using System.Linq;
+using Contrib.XmlSerializer;
 using Infrastructure.Model;
 
 namespace Infrastructure.Oxm
@@ -8,7 +10,11 @@ namespace Infrastructure.Oxm
         public OfferNewModelOxm()
             : base("offer")
         {
-            Root().Attribute("available", m => m.IsAvailable).Set((m, value) => m.IsAvailable = value);
+            Root().Attribute("available", m => m.IsAvailable).Set((m, value) =>
+            {
+                m.IsAvailable = value;
+                m.OfferId = Guid.NewGuid();
+            });
             Root().Attribute("group_id", m => m.GroupId).Set((m, value) => m.GroupId = value);
             Root().Attribute("type", m => m.Type).Set((m, value) => m.Type = value);
             Root().Attribute("id", m => m.Id).Set((m, value) => m.Id = value);
@@ -23,9 +29,9 @@ namespace Infrastructure.Oxm
             Element("market_category", m => m.MarketCategory).Set((m, value) => m.MarketCategory = value);
             Element("model", m => m.Model).Set((m, value) => m.Model = value);
             Element("name", m => m.Name).Set((m, value) => m.Name = value);
-            SelfElementCollection("param", m => m.Params).Set((m, value) => m.Params = value);
+            SelfElementCollection("param", m => m.Params).Set((m, value) => m.Params = value.ToList());
             Element("pickup", m => m.Pickup).Set((m, value) => m.Pickup = value);
-            SelfElementCollection("picture", m => m.Pictures).Set((m, value) => m.Pictures = value);
+            SelfElementCollection("picture", m => m.Pictures).Set((m, value) => m.Pictures = value.ToList());
             Element("price", m => m.Price).Set((m, value) => m.Price = value);
             Element("sales_notes", m => m.SalesNotes).Set((m, value) => m.SalesNotes = value);
             Element("store", m => m.Store).Set((m, value) => m.Store = value);

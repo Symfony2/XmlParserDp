@@ -4,7 +4,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:viewModels="clr-namespace:XmlParser.ViewModels"
         xmlns:helpers="clr-namespace:XmlParser.Helpers"
-        Title="Parser" Height="350" Width="525">
+        Title="Parser" Height="350" Width="525" Icon="xml.ico">
     <Controls:MetroWindow.Resources>
         <helpers:CustomBoolToVisibilityConverter x:Key="VisibilityConverter" FalseValue="Hidden" TrueValue="Visible"/>
     </Controls:MetroWindow.Resources>
@@ -62,13 +62,14 @@
             <WrapPanel Grid.Row="3" Margin="0,5" Orientation="Horizontal" HorizontalAlignment="Center">
                 <WrapPanel.Resources>
                     <Style TargetType="Controls:ToggleSwitch" BasedOn="{StaticResource {x:Type Controls:ToggleSwitch}}">
-                        <Setter Property="MinWidth"  Value="100"/>
+                        <Setter Property="OnLabel" Value="ВКЛ"/>
+                        <Setter Property="OffLabel" Value="ВЫКЛ"/>
+                        <Setter Property="MinWidth"  Value="130"/>
                         <Setter Property="Margin"  Value="5,0,0,0"/>
                     </Style>
                 </WrapPanel.Resources>
-                <Controls:ToggleSwitch ToolTip="Заменить категории"/>
-                <Controls:ToggleSwitch ToolTip="Сгруппировать товары одной группы"/>
-                <Controls:ToggleSwitch ToolTip="Заменить параметры в товарах"/>
+                <Controls:ToggleSwitch ToolTip="Заменить категории" IsChecked="{Binding Path=ReplaceCategoryId, UpdateSourceTrigger=PropertyChanged}"/>
+                <Controls:ToggleSwitch ToolTip="Сгруппировать товары одной группы" IsChecked="{Binding Path=GroupingApply, UpdateSourceTrigger=PropertyChanged}"/>
             </WrapPanel>
             
             <WrapPanel Grid.Row="4" Orientation="Vertical" Margin="5,20,5,0" HorizontalAlignment="Right">
