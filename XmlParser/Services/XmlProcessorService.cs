@@ -10,6 +10,7 @@ using Infrastructure;
 using Infrastructure.DtoMapper;
 using Infrastructure.Model;
 using Infrastructure.Oxm;
+using XmlParser.Helpers;
 
 namespace XmlParser.Services
 {
@@ -92,7 +93,7 @@ namespace XmlParser.Services
         private void ReformOfferList(XmlReader offerTree, XmlWriter xmlWriter, bool changeCategoryId,
             bool isGroupingNeed)
         {
-
+            var comparer = new PictureComparer();
             xmlWriter.WriteStartElement("offers");
             IEnumerable<OfferNewModel> offerNewModels = StreamNodes(offerTree, new[] { "offer" });
 
@@ -107,10 +108,11 @@ namespace XmlParser.Services
                                 .Select(par =>
                                 {
                                     Param param = par.First();
-                                    param.Content = string.Join(";", par.Select(p => p.Content));
+                                    param.Content = string.Join(";", par.Select(p => p.Content).Distinct());
                                     return param;
                                 }).ToList();
-                            model.Pictures = grouping.SelectMany(pic => pic.Pictures).Distinct().ToList();
+
+                            model.Pictures = grouping.SelectMany(pic => pic.Pictures).Distinct(comparer).ToArray();
 
                             return model;
                         });
@@ -139,10 +141,10 @@ namespace XmlParser.Services
                                 .Select(par =>
                                 {
                                     Param param = par.First();
-                                    param.Content = string.Join(";", par.Select(p => p.Content));
+                                    param.Content = string.Join(";", par.Select(p => p.Content).Distinct());
                                     return param;
                                 }).ToList();
-                            model.Pictures = grouping.SelectMany(pic => pic.Pictures).Distinct().ToList();
+                            model.Pictures = grouping.SelectMany(pic => pic.Pictures).Distinct(comparer).ToArray();
 
                             return model;
                         });

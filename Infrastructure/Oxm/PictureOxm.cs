@@ -9,11 +9,7 @@ namespace Infrastructure.Oxm
         public PictureOxm()
             : base("picture")
         {
-            Text(m => m.Content).Set((m, value) =>
-            {
-                m.Id = Guid.NewGuid();
-                m.Content = value;
-            });
+            Text(m => m.Content).Set((m, value) => m.Content = value);
         }
 
         protected override Picture Return()
