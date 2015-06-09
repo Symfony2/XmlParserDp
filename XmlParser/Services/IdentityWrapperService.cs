@@ -52,6 +52,7 @@ namespace XmlParser.Services
                 {
                     csvWriter.WriteField(par.Key);
                     csvWriter.WriteField(par.Value);
+                    csvWriter.NextRecord();
                 }
             }
         }
