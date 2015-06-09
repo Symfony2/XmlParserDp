@@ -16,7 +16,7 @@ namespace Infrastructure.DtoMapper
                 .ForMember(d => d.Content, opt => opt.MapFrom(src => src.Content));
 
             Mapper.CreateMap<OfferNewModel, OfferOldModel>()
-                .ForMember(d => d.Id, opt => opt.Ignore())
+                .ForMember(d => d.Id, opt => opt.Ignore()) //todo id from new model is another then old models one
                 .ForMember(d => d.Oldprice, opt => opt.Ignore())
                 .ForMember(d => d.AdvcampaignId, opt => opt.Ignore())
                 .ForMember(d => d.AdvcampaignName, opt => opt.Ignore())
