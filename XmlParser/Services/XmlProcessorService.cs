@@ -108,7 +108,7 @@ namespace XmlParser.Services
                                 .Select(par =>
                                 {
                                     Param param = par.First();
-                                    param.Content = string.Join(";", par.Select(p => p.Content).Distinct());
+                                    param.Content = string.Join(",", par.Select(p => p.Content).Distinct());
                                     return param;
                                 }).ToList();
 
@@ -141,7 +141,7 @@ namespace XmlParser.Services
                                 .Select(par =>
                                 {
                                     Param param = par.First();
-                                    param.Content = string.Join(";", par.Select(p => p.Content).Distinct());
+                                    param.Content = string.Join(",", par.Select(p => p.Content).Distinct());
                                     return param;
                                 }).ToList();
                             model.Pictures = grouping.SelectMany(pic => pic.Pictures).Distinct(comparer).ToArray();

@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Linq;
+using AutoMapper;
 using Infrastructure.Model;
 
 namespace Infrastructure.DtoMapper
@@ -16,8 +17,6 @@ namespace Infrastructure.DtoMapper
                 .ForMember(d => d.Content, opt => opt.MapFrom(src => src.Content));
 
             Mapper.CreateMap<OfferNewModel, OfferOldModel>()
-                .ForMember(d => d.Id, opt => opt.Ignore()) //todo id from new model is another then old models one
-                .ForMember(d => d.Oldprice, opt => opt.Ignore())
                 .ForMember(d => d.AdvcampaignId, opt => opt.Ignore())
                 .ForMember(d => d.AdvcampaignName, opt => opt.Ignore())
                 .ForMember(d => d.Picture, opt => opt.Ignore())
@@ -27,6 +26,7 @@ namespace Infrastructure.DtoMapper
                 .ForMember(d => d.GroupId, opt => opt.MapFrom(src => src.GroupId))
                 .ForMember(d => d.Type, opt => opt.MapFrom(src => src.Type))
                 .ForMember(d => d.OriginalId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(d => d.Id, opt => opt.MapFrom(src => src.Id))
 
                 .ForMember(d => d.Delivery, opt => opt.MapFrom(src => src.Delivery))
                 .ForMember(d => d.Description, opt => opt.MapFrom(src => src.Description))
@@ -40,13 +40,18 @@ namespace Infrastructure.DtoMapper
                 .ForMember(d => d.Params, opt => opt.MapFrom(src => src.Params))
                 .ForMember(d => d.CategoryId, opt => opt.MapFrom(src => src.CategoryId))
                 .ForMember(d => d.Vendor, opt => opt.MapFrom(src => src.Vendor))
-                
+
+                .ForMember(d => d.Oldprice, opt => opt.MapFrom(src => src.Price))
                 .ForMember(d => d.Price, opt => opt.MapFrom(src => src.Price))
                 .ForMember(d => d.ModifiedTime, opt => opt.MapFrom(src => src.ModifiedTime))
                 
                 .ForMember(d => d.Url, opt => opt.MapFrom(src => src.Url))
                 .ForMember(d => d.CurrencyId, opt => opt.MapFrom(src => src.CurrencyId))
-                .ForMember(d => d.Name, opt => opt.MapFrom(src => src.Name));
+                .ForMember(d => d.Name, opt => opt.MapFrom(src => src.Name))
+                .AfterMap((nm, om) =>
+                {
+                    om.Thumbnail = nm.Pictures.Any() ? nm.Pictures.First().Content : " ";
+                });
         }
 
 

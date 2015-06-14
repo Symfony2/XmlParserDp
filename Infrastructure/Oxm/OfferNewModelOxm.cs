@@ -25,7 +25,15 @@ namespace Infrastructure.Oxm
             Element("market_category", m => m.MarketCategory).Set((m, value) => m.MarketCategory = value);
             Element("model", m => m.Model).Set((m, value) => m.Model = value);
             Element("name", m => m.Name).Set((m, value) => m.Name = value);
-            SelfElementCollection("param", m => m.Params).Set((m, value) => m.Params = value.ToList());
+            SelfElementCollection("param", m => m.Params).Set((m, value) =>
+            {
+                m.Params = value.ToList().Where(param => param.Name.Equals("Размер"))
+                    .Select(v =>
+                    {
+                        v.Content = v.Content.Replace(',', '.');
+                        return v;
+                    });
+            });
             Element("pickup", m => m.Pickup).Set((m, value) => m.Pickup = value);
             SelfElementCollection("picture", m => m.Pictures).Set((m, value) => m.Pictures = value.ToList());
             Element("price", m => m.Price).Set((m, value) => m.Price = value);
