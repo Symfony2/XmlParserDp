@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Contrib.XmlSerializer;
 using Infrastructure.Model;
@@ -27,12 +28,15 @@ namespace Infrastructure.Oxm
             Element("name", m => m.Name).Set((m, value) => m.Name = value);
             SelfElementCollection("param", m => m.Params).Set((m, value) =>
             {
-                m.Params = value.ToList().Where(param => param.Name.Equals("Размер"))
-                    .Select(v =>
+                List<Param> list = value.ToList();
+                foreach (Param param in list)
+                {
+                    if (param.Name.Equals("Размер"))
                     {
-                        v.Content = v.Content.Replace(',', '.');
-                        return v;
-                    });
+                        param.Content = param.Content.Replace(',', '.');
+                    }
+                }
+                m.Params = list;
             });
             Element("pickup", m => m.Pickup).Set((m, value) => m.Pickup = value);
             SelfElementCollection("picture", m => m.Pictures).Set((m, value) => m.Pictures = value.ToList());
